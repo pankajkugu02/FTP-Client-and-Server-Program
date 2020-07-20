@@ -1,31 +1,70 @@
 import java.io.*;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
-import java.io.IOException;
-import java.net.InetAddress;
-class Server1
+import java.net.*;
+class Server
 {
 	public static void main(String a[]) throws IOException
 	{
-		  byte[] da = new byte[9999];
-
-		  //Packet created to recieve message from server
-		  DatagramPacket recda = null;
-	          recda = new DatagramPacket(da, da.length);
-
-		  //Server Socket is being created
-		  DatagramSocket serversocket = new DatagramSocket(789);
-  		   
-		  serversocket.receive(recda); 
-  		  System.out.println("Client has sent :-" + new String(recda.getData())); 
-		  byte[] re=null;
-		  String p="Hello Client";
-		  re=p.getBytes();
-
-		  //Packet is created to send response to the Client
-
-		  DatagramPacket res=new DatagramPacket(re,re.length,recda.getAddress(),recda.getPort());
-		  serversocket.send(res);	  
-    	}
+		DatagramPacket packin=null;
+		DatagramPacket packout=null;
+		DatagramSocket serversocket=null;
+		byte[] buffin,buffout;
+		
+		serversocket=new DatagramSocket(50000);
+		buffin=new byte[1000];
+		packin=new DatagramPacket(buffin,buffin.length);
+		serversocket.receive(packin);
+		String d=new String(packin.getData(),0,packin.getLength());
+		System.out.println(d+"\n");
+		String lsfile="C:/Users/Pankaj/Desktop/Server";
+		File f=new File(lsfile);
+		File fl[]=f.listFiles();
+		StringBuilder s=new StringBuilder("\n");
+		for(int i=0;i<fl.length;i++)
+		{
+			if((fl[i].toString()).endsWith(".txt"))
+			{
+				s.append(fl[i].getName()+" "+fl[i].length()+"Bytes \n");
+			}
+		}
+		s.append("\nEnter the file name which you want :");
+		buffout=(s.toString()).getBytes();
+		packout=new DatagramPacket(buffout,0,buffout.length,packin.getAddress(),packin.getPort());
+		serversocket.send(packout);
+		buffin=new byte[100000];
+		packin=new DatagramPacket(buffin,buffin.length);
+		serversocket.receive(packin);
+		String file=new String(packin.getData(),0,packin.getLength());
+		System.out.println("Requested File is :"+file);
+		boolean flag=false;
+		int ind=-1;
+		for(int i=0;i<fl.length;i++)
+		{
+			if(((fl[i].getName()).toString()).equalsIgnoreCase(file))
+			{
+				ind=i;
+				flag=true;
+			}
+		}
+		if(!flag)
+		{
+			System.out.println("ERROR");
+			return;
+		}
+		File reqf=new File(fl[ind].getAbsolutePath());
+		FileReader fr=new FileReader(reqf);
+		BufferedReader brf=new BufferedReader(fr); 
+		String se=null;
+		s=new StringBuilder("");
+		while((se=brf.readLine())!=null)
+		{
+			s.append(se);
+		}
+		buffout=(s.toString()).getBytes();
+		packout=new DatagramPacket(buffout,0,buffout.length,packin.getAddress(),packin.getPort());
+		serversocket.send(packout);
+		String res="File has been sent to you ";
+		buffout=res.getBytes();
+		packout=new DatagramPacket(buffout,0,buffout.length,packin.getAddress(),packin.getPort());
+		serversocket.send(packout);
+	}
 }
