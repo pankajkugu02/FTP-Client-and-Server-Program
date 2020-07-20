@@ -1,33 +1,43 @@
 import java.io.*;
 import java.util.Scanner;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.io.IOException;
-import java.net.InetAddress;
-class Client1
+import java.net.*;
+class Client
 {
-	public static void main(String a[]) throws IOException
+	public static void main(String args[]) throws IOException
 	{
-		byte buff[]=null;
-
-		//Client socket is being created
-
-		DatagramSocket clientsocket=new DatagramSocket();
+		DatagramPacket packout = null;
+		DatagramPacket packin= null;
+		DatagramSocket clientsocket = null;
+        byte[] buffin, buffout;
+		
 		InetAddress ip=InetAddress.getLocalHost();
-		String da="Hello Server";
-		buff=da.getBytes();
-
-		//Below Packet is created to send message to the server
-
-		DatagramPacket p=new DatagramPacket(buff,buff.length,ip,789);
-		clientsocket.send(p);
-		byte[] buff1=new byte[9999];
-
-		//Below Packet is created to recieve response from the server
-
-		DatagramPacket rec=new DatagramPacket(buff1,buff1.length);
-		clientsocket.receive(rec);
-		System.out.println("Server has sent - " +new String(rec.getData()));
-			
+		clientsocket=new DatagramSocket();
+		String m="Server please send the directory ";
+		buffout=m.getBytes();
+		packout=new DatagramPacket(buffout,0,buffout.length,ip,50000);
+		clientsocket.send(packout);
+		buffin=new byte[1000];
+		packin =new DatagramPacket(buffin,buffin.length);
+		clientsocket.receive(packin);
+		String data=new String(packin.getData(),0,packin.getLength());
+		System.out.println(data);
+		
+		Scanner inp=new Scanner(System.in);
+		String file=inp.nextLine();
+		buffout=file.getBytes();
+		packout=new DatagramPacket(buffout,0,buffout.length,ip,50000);
+		clientsocket.send(packout);
+		
+		buffin=new byte[1000];
+		packin=new DatagramPacket(buffin,buffin.length);
+		clientsocket.receive(packin);
+		String da=new String(packin.getData(),0,packin.getLength());
+		BufferedWriter pw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
+		
+		pw.write(da);
+		pw.close();
+		packin=new DatagramPacket(buffin,buffin.length);
+		clientsocket.receive(packin);
+		System.out.println(new String(packin.getData(),0,packin.getLength()));
 	}
 }
