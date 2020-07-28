@@ -8,18 +8,20 @@ class Client
 		DatagramPacket packout = null;
 		DatagramPacket packin= null;
 		DatagramSocket clientsocket = null;
-        byte[] buffin, buffout;
+        	byte[] buffin, buffout;
 		
 		InetAddress ip=InetAddress.getLocalHost();
 		
 		//Sending request packet to send the directory from where server will send the file
+
 		clientsocket=new DatagramSocket();
-		String m="Server please send the directory ";
+		String m="Client ->>Server please send the directory ";
 		buffout=m.getBytes();
 		packout=new DatagramPacket(buffout,0,buffout.length,ip,50000);
 		clientsocket.send(packout);
 		
 		//Receiving Packet containing the Directory from the server and responding the server for required file
+
 		buffin=new byte[1000];
 		packin =new DatagramPacket(buffin,buffin.length);
 		clientsocket.receive(packin);
@@ -31,6 +33,8 @@ class Client
 		packout=new DatagramPacket(buffout,0,buffout.length,ip,50000);
 		clientsocket.send(packout);
 		
+		// Go Back N Protocol Implementation
+
 		byte[] rdata=new byte[1000];
 		int wfor=0;
 		ArrayList<Packet> received=new ArrayList<Packet>();
@@ -72,8 +76,9 @@ class Client
 		}
 		
 		pw.close();
-		//packin=new DatagramPacket(buffin,buffin.length);
-		//clientsocket.receive(packin);
-		//System.out.println(new String(packin.getData(),0,packin.getLength()));
+		packin=new DatagramPacket(buffin,buffin.length);
+		clientsocket.receive(packin);
+		System.out.println(new String(packin.getData(),0,packin.getLength()));
 	}
+}
 }
