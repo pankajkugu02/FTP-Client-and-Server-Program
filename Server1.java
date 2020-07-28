@@ -18,6 +18,7 @@ class Server
 		serversocket=new DatagramSocket(50000);
 		
 		//Receiving message from the client
+
 		buffin=new byte[1000];
 		packin=new DatagramPacket(buffin,buffin.length);
 		serversocket.receive(packin);
@@ -25,6 +26,7 @@ class Server
 		System.out.println(d+"\n");
 		
 		//Sending directory to the server
+
 		String lsfile="C:/Users/Pankaj/Desktop/Server";
 		File f=new File(lsfile);
 		File fl[]=f.listFiles();
@@ -123,7 +125,10 @@ class Server
 				}
 			}
 		}
-		System.out.println("/nFile has been sent to client");
+		String sr="Server ->> You check your diretory file has been sent to you";
+		buffin=sr.getBytes();
+		DatagramPacket pr=new DatagramPacket(buffin ,buffin.length,packin.getAddress(),packin.getPort());
+		serversocket.send(pr);
 	}
 }
 
