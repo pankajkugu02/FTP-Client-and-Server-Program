@@ -25,7 +25,7 @@ class Server
 		String d=new String(packin.getData(),0,packin.getLength());
 		System.out.println(d+"\n");
 		
-		//Sending directory to the server
+		//Sending directory to the client
 
 		String lsfile="C:/Users/Pankaj/Desktop/Server";
 		File f=new File(lsfile);
