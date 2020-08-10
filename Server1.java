@@ -49,7 +49,8 @@ class Server
 		serversocket.receive(packin);
 		String file=new String(packin.getData(),0,packin.getLength());
 		System.out.println("Requested File is :"+file);
-		boolean flag=false;
+		//Now server will check that the filename sent by client exists or not
+                boolean flag=false;
 		int ind=-1;
 		for(int i=0;i<fl.length;i++)
 		{
