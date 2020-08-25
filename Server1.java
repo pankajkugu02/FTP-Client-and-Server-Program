@@ -77,21 +77,16 @@ class Server
 		
 		byte[] fbytes=(s.toString()).getBytes();
 		ArrayList<Packet> sent=new ArrayList<Packet>();
-		int lseq=-1;
-	
-		wfor=0;
 		int lastseq=(int)Math.ceil((double)fbytes.length/packsize);
-		int count=0;
 		while(true)
 		{
 			
-			if(wfor!=lseq&&lsent<lastseq)
+			while(lsent<lastseq&&lsent-wfor<wsize)
 			{
-				
 				byte[] fpacket=new byte[packsize];
 				
 				fpacket=Arrays.copyOfRange(fbytes,lsent*packsize,lsent*packsize+packsize);
-				Packet sp=new Packet(wfor,fpacket,(lastseq==count)?true:false);
+				Packet sp=new Packet(lsent,fpacket,(lsent==lastseq-1)?true:false);
 				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 				ObjectOutputStream os = new ObjectOutputStream(outputStream);
 				os.writeObject(sp);
@@ -100,9 +95,7 @@ class Server
 				sent.add(sp);
 				serversocket.send(p);
 				
-				count++;
 				lsent++;
-				
 			}
 			byte[] ackbuff=new byte[40];
 			DatagramPacket ack=new DatagramPacket(ackbuff,ackbuff.length);
@@ -113,25 +106,27 @@ class Server
 				ByteArrayInputStream in = new ByteArrayInputStream(ack.getData());
 				ObjectInputStream is = new ObjectInputStream(in);
 				ACKpacket ap=(ACKpacket)is.readObject();
-				if(lsent==lastseq)
+				if(ap.getpacket()==lastseq)
 				{
 					break;
 				}
-				wfor=ap.getpacket();
+				wfor=Math.max(wfor,ap.getpacket());
 			}
 			catch(SocketTimeoutException e)
 			{
+				for(int i=wfor;i<lsent;i++)
+				{
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 					ObjectOutputStream os = new ObjectOutputStream(outputStream);
-					os.writeObject(sent.get(lsent-1));
+					os.writeObject(sent.get(i));
 					byte[] sdata = outputStream.toByteArray();
 					DatagramPacket p=new DatagramPacket(sdata,sdata.length,packin.getAddress(),packin.getPort());
 					serversocket.send(p);
-				
+				}
 			}
 		}
-		String src="Server ->> You check your diretory file has been sent to you";
-		buffin=src.getBytes();
+		String sr="Server ->> You check your diretory file has been sent to you";
+		buffin=sr.getBytes();
 		DatagramPacket pr=new DatagramPacket(buffin ,buffin.length,packin.getAddress(),packin.getPort());
 		serversocket.send(pr);
 	}
