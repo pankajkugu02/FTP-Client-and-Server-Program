@@ -8,6 +8,11 @@ class Server
 	public static int wsize=2;
 	public static int wfor=0;
 	public static int lsent=0;
+	
+	static int packet = 0;
+	static int expectedAck = 0;
+	static final int timeout = 1000;
+	static int packetLoss = 0;
 	public static void main(String a[]) throws Exception
 	{
 		DatagramPacket packin=null;
@@ -27,7 +32,7 @@ class Server
 		
 		//Sending directory to the client
 
-		String lsfile="C:/Users/Pankaj/Desktop/Server";
+		String lsfile="C:/Users/91932/Desktop/Server";
 		File f=new File(lsfile);
 		File fl[]=f.listFiles();
 		StringBuilder s=new StringBuilder("\n");
@@ -72,7 +77,7 @@ class Server
 		s=new StringBuilder("");
 		while((se=brf.readLine())!=null)
 		{
-			s.append(se);
+			s.append(se+"\n");
 		}
 		
 		byte[] fbytes=(s.toString()).getBytes();
@@ -125,9 +130,36 @@ class Server
 				}
 			}
 		}
-		String sr="Server ->> You check your diretory file has been sent to you";
-		buffin=sr.getBytes();
-		DatagramPacket pr=new DatagramPacket(buffin ,buffin.length,packin.getAddress(),packin.getPort());
-		serversocket.send(pr);
+		
+		
+		
+		
+		
+		
+		
+		
+		//Sending Using Stop and wait Protocol  
+		
+		InputStream is = new FileInputStream(fl[ind].getAbsolutePath());
+		System.out.println("Sending same file using Stop and Wait Protcol");
+		byte[] sendData = new byte[508];
+		byte[] lengthByteArray = Helper.int2ByteArray(512);
+		int length=0;
+        InetAddress IPAddress= packin.getAddress();
+		int port=packin.getPort();
+        while ((length = is.read(sendData)) >= 0)
+        {
+            lengthByteArray = Helper.int2ByteArray(length);
+            sendData = Arrays.copyOf(sendData, 512);
+            sendData[508] = lengthByteArray[0];
+            sendData[509] = lengthByteArray[1];
+            sendData[510] = lengthByteArray[2];
+            sendData[511] = lengthByteArray[3];
+
+            sendDataToServer(sendData, IPAddress, port, timeout);
+			sendData = new byte[508];
+        }
+		is.close();
 	}
-}
+    
+   
