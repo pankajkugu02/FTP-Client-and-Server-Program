@@ -80,9 +80,19 @@ class Server
 			s.append(se+"\n");
 		}
 		
+		
+		
+		
+		
+		//Sending file using Go Back N Protocol
+		
+		System.out.println("\nSending File using Go back N Protocol ");
 		byte[] fbytes=(s.toString()).getBytes();
 		ArrayList<Packet> sent=new ArrayList<Packet>();
 		int lastseq=(int)Math.ceil((double)fbytes.length/packsize);
+		
+		long start = System.nanoTime();
+		
 		while(true)
 		{
 			
@@ -130,23 +140,25 @@ class Server
 				}
 			}
 		}
+		long end = System.nanoTime();
+		System.out.println("\n\nFile sending process by Go back n protocol is completed and approx time taken by it is "+((end-start)/1000000)+" milli seconds");
 		
 		
 		
 		
 		
 		
+		//Sending File Using Stop and wait Protocol  
 		
-		
-		//Sending Using Stop and wait Protocol  
 		
 		InputStream is = new FileInputStream(fl[ind].getAbsolutePath());
-		System.out.println("Sending same file using Stop and Wait Protcol");
+		System.out.println("\nSending same file using Stop and Wait Protcol");
 		byte[] sendData = new byte[508];
 		byte[] lengthByteArray = Helper.int2ByteArray(512);
 		int length=0;
         InetAddress IPAddress= packin.getAddress();
 		int port=packin.getPort();
+		start = System.nanoTime();
         while ((length = is.read(sendData)) >= 0)
         {
             lengthByteArray = Helper.int2ByteArray(length);
@@ -156,10 +168,57 @@ class Server
             sendData[510] = lengthByteArray[2];
             sendData[511] = lengthByteArray[3];
 
-            sendDataToServer(sendData, IPAddress, port, timeout);
+            sendDataToClient(sendData, IPAddress, port, timeout);
 			sendData = new byte[508];
         }
+		end = System.nanoTime();
+		System.out.println("\nFile sending process by Stop and Wait protocol is completed and approx time taken by it is "+((end-start)/1000000)+" milli seconds");
 		is.close();
 	}
     
-   
+    public static void sendDataToClient(byte[] sendData, InetAddress IPAddress, int port, int timeout) throws IOException
+    {
+        boolean lostPacket = false;
+        int retry = 0;
+
+        byte[] receiveData = new byte[sendData.length];
+
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+        do
+        {
+            DatagramSocket serversocket = new DatagramSocket();
+
+            //Server: sending packet
+            serversocket.send(sendPacket);
+
+
+            // START TIMER
+            serversocket.setSoTimeout(timeout);
+
+            DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+
+            try
+            {
+                serversocket.receive(receivePacket);
+                        
+                
+                int receivedAck = Helper.byteArray2Int(receivePacket.getData());
+                if (receivedAck == expectedAck)
+				{
+                    lostPacket = false;
+                    retry = 0;
+                    expectedAck = (expectedAck + 1) % 2;
+                }
+
+            }
+            catch (Exception e)
+            {
+                packetLoss++;
+                lostPacket = true;
+            }
+            serversocket.close();
+        }
+        while (lostPacket == true);
+		packet++;
+    }
+}
