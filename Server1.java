@@ -167,7 +167,8 @@ class Server
             sendData[509] = lengthByteArray[1];
             sendData[510] = lengthByteArray[2];
             sendData[511] = lengthByteArray[3];
-
+		
+	    //function we will create to send the data to the client.
             sendDataToClient(sendData, IPAddress, port, timeout);
 			sendData = new byte[508];
         }
