@@ -202,7 +202,8 @@ class Server
             {
                 serversocket.receive(receivePacket);
                         
-                
+                //recieve packet will be in form of byte array
+		    
                 int receivedAck = Helper.byteArray2Int(receivePacket.getData());
                 if (receivedAck == expectedAck)
 				{
@@ -212,6 +213,8 @@ class Server
                 }
 
             }
+		
+	    //if acknowledgement is lost
             catch (Exception e)
             {
                 packetLoss++;
