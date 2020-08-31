@@ -1,31 +1,5 @@
 public class Helper
 {
-
-    public static void checkArgs(String[] args, int num, String message)
-    {
-        if (args.length != num)
-        {
-            System.out.println(message);
-            System.exit(-1);
-        }
-    }
-
-    public static int parseStringToInt(String str, String message)
-    {
-        int num = 0;
-        try
-        {
-            num = Integer.parseInt(str);
-        }
-        catch (Exception ex)
-        {
-            System.out.print(message);
-            System.exit(-2);
-        }
-        return num;
-    }
-
-
     public static byte[] int2ByteArray(int value)
     {
         return new byte[]
