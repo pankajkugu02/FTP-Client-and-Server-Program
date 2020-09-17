@@ -5,4 +5,6 @@ Then we updated our code,and now client will send a message to server to send th
 
 Now we have created same thing as above using go back n protocol.
 
-Then we have implemented both Go Back n and Stop and Wait Protocol and then we have compared transferring time of both the protocols.
+Then we have implemented both Go Back n and Stop and Wait Protocol and then we have compared transferring time of both the protocols.<br>
+After comparison we come to know that the Go Back N is performing good in case of big files in comparison to Stop and Wait .<br>
+We have run the code for a file of 10MB for which :-<br>Go Back N takes : 5 seconds<br>Stop and Wait takes : 9-10 seconds
