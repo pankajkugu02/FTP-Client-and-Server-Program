@@ -92,7 +92,7 @@ class Client
             System.out.println("Problem occured writing to file");
         }
 		if(flag)
-			System.out.println("\nFile has been sent  to your directory using Go back n protocol");	
+			System.out.println("\nFile has been received in directory Go back n protocol");	
 		flag=false;
 		
 		
@@ -169,7 +169,7 @@ class Client
             System.out.println("Problem occured writing to file");
         }
 		if(flag)
-			System.out.println("\n\nFile has been sent to your using Stop and Wait protocol");
+			System.out.println("\n\nFile has been received in your directory Stop and Wait protocol");
 	}
 	private static void createDirectory(String directoryName)
     {
