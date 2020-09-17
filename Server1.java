@@ -4,7 +4,7 @@ import java.util.*;
 class Server
 {
 	public static final int TIMER=40;
-	public static int packsize=4;
+	public static int packsize=20;
 	public static int wsize=2;
 	public static int wfor=0;
 	public static int lsent=0;
