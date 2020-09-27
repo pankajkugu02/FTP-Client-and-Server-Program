@@ -3,7 +3,7 @@ import java.util.*;
 import java.net.*;
 import java.io.File;
 import java.io.FileOutputStream;
-class Client
+class Client1
 {
 	static ArrayList<byte[]> packets = new ArrayList();
 	static int previousAck = 0;
