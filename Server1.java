@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-class Server
+class Server1
 {
 	public static final int TIMER=40;
 	public static int packsize=20;
