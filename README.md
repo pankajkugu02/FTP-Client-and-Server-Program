@@ -52,7 +52,7 @@ Step-3:-Make your friend as Client and you as Server and share all the files to 
 
 Step-4:-First Run Server.java code on your side and then tell your friend to run Client.java code and then follow the steps.
         
- # Note-1:- Use your directory path in Server code line.
+ # Note-1:- Use your directory path in Server code.
  # Note-2:- For localhost sharing try to send large files like more than 10 mb file then go back n will take lesser time than stop and wait,on average they will take 8-10 seconds. 
             It is because we do many operations in Go back n Protocol which take time and when we share small size file this time matters
             but when we send large files then result will be correct.   
